@@ -2,7 +2,7 @@
 
 namespace HelpPC\ChromePdf\Driver;
 
-use HelpPC\ChromePdf\Exception\APIException;
+use HelpPC\ChromePdf\Exception\ApiException;
 use Symfony\Component\HttpClient\Exception\ClientException;
 use Symfony\Contracts\HttpClient;
 
@@ -214,7 +214,7 @@ class Browserless extends AbstractPDF
             $response = $this->client->request('POST', $this->apiUrl . $this->pdfEndpoint, $requestOptions);
             return $response->getContent();
         } catch (ClientException $e) {
-            throw new APIException("Failed to render PDF: {$e->getMessage()}", $e->getCode(), $e);
+            throw new ApiException("Failed to render PDF: {$e->getMessage()}", $e->getCode(), $e);
         }
     }
 

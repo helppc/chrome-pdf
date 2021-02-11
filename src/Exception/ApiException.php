@@ -2,6 +2,6 @@
 
 namespace HelpPC\ChromePdf\Exception;
 
-class APIException extends \RuntimeException
+class ApiException extends \RuntimeException
 {
 }
