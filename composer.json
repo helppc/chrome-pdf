@@ -40,7 +40,7 @@
     "rector": "php vendor/bin/rector process --dry-run"
   },
   "require-dev": {
-    "symfony/console": "^5.1",
+    "symfony/console": "^5.1 || ^7.0",
     "phpstan/phpstan": "^2.0.0",
     "phpstan/phpstan-strict-rules": "^2.0.0",
     "phpunit/phpunit": "^11.3",
