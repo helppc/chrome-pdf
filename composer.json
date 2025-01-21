@@ -3,35 +3,60 @@
   "homepage": "http://helppc.cz",
   "type": "library",
   "support": {
-    "email": "info@tirus.cz",
+    "email": "jsem@tomaskulhanek.cz",
     "issues": "https://github.com/helppc/chrome-pdf/issues",
     "source": "https://github.com/helppc/chrome-pdf"
   },
   "license": [
     "MIT"
   ],
+  "description": "Client for browserless.io Chrome",
   "authors": [
     {
       "name": "Tomas Kulhanek",
-      "homepage": "http://tirus.cz"
+      "homepage": "https://tomaskulhanek.cz"
     }
   ],
   "require": {
-    "php": ">=7.4"
+    "php": ">=8.2",
+    "symfony/http-client": "^7.2"
   },
   "autoload": {
     "psr-4": {
       "HelpPC\\ChromePdf\\": "src/"
     }
   },
+
+  "scripts": {
+    "check": [
+      "@phpstan",
+      "@phpcs",
+      "@rector"
+    ],
+    "phpcs": "phpcs --standard=./phpcs.xml",
+    "phpcbf": "phpcbf  --standard=./phpcs.xml",
+    "phpstan": "php -d xdebug.mode=off vendor/phpstan/phpstan/phpstan analyze -c phpstan.neon --no-progress --memory-limit=-1",
+    "phpstan-pro": "php -d xdebug.mode=off vendor/phpstan/phpstan/phpstan analyze -c phpstan.neon --no-progress --memory-limit=-1 --pro",
+    "rector": "php vendor/bin/rector process --dry-run"
+  },
   "require-dev": {
-    "phpstan/phpstan": "^0.12.0",
-    "phpstan/phpstan-nette": "^0.12",
-    "symfony/console": "^5.1"
+    "symfony/console": "^5.1",
+    "phpstan/phpstan": "^2.0.0",
+    "phpstan/phpstan-strict-rules": "^2.0.0",
+    "phpunit/phpunit": "^11.3",
+    "rector/rector": "^2.0",
+    "shipmonk/phpstan-rules": "^4.0",
+    "slevomat/coding-standard": "^8.15",
+    "squizlabs/php_codesniffer": "^3.10"
   },
   "archive": {
     "exclude": [
       "/tests"
     ]
+  },
+  "config": {
+    "allow-plugins": {
+      "dealerdirect/phpcodesniffer-composer-installer": true
+    }
   }
 }

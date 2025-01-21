@@ -1,0 +1,117 @@
+name: Code Quality Assurance ✅
+run-name: ${{ github.actor }} running Code Quality Assurance ✅
+
+on:
+  push:
+    paths:
+      - '.github/workflows/ci.yml'
+      - '**/*.php'
+      - 'composer.json'
+      - 'composer.lock'
+      - 'phpcs.xml'
+      - 'phpstan.neon'
+      - 'rector.php'
+
+    branches:
+      - master
+  pull_request:
+    types: [opened, reopened, synchronize]
+    paths:
+      - '.github/workflows/ci.yml'
+      - '**/*.php'
+      - 'composer.json'
+      - 'composer.lock'
+      - 'phpcs.xml'
+      - 'phpstan.neon'
+      - 'rector.php'
+
+  workflow_dispatch: ~
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+env:
+  composer-install-args: "--no-progress --no-interaction --prefer-dist --no-scripts --ignore-platform-reqs"
+
+jobs:
+  composer:
+    name: "📦 Composer"
+    runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        php-versions: ['8.2', '8.3', '8.4']
+
+    steps:
+      - uses: actions/checkout@v4
+        name: 🛒 Checkout
+
+      - name: 🔍 Check if composer.json exists
+        id: check_files
+        uses: andstor/file-existence-action@v3
+        with:
+          files: composer.json
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}-${{ matrix.php-versions }}
+          restore-keys: |
+            ${{ runner.os }}-${{ matrix.php-versions }}-composer-
+
+      - uses: php-actions/composer@v6
+        name: 🏗 PHP ${{ matrix.php-versions }} and Composer install
+        with:
+          args: ${{ env.composer-install-args }}
+          php_version: ${{ matrix.php-versions }}
+      - name: Validate Composer
+        run: composer validate --strict
+      - name: Security Check
+        run: composer audit
+
+  check:
+    needs: composer
+    name: "🛡️ Check"
+    runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        php-versions: ['8.2', '8.3', '8.4']
+
+    steps:
+      - uses: actions/checkout@v4
+        name: 🛒 Checkout
+
+      - name: 🔍 Check if composer.json exists
+        id: check_files
+        uses: andstor/file-existence-action@v3
+        with:
+          files: composer.json
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}-${{ matrix.php-versions }}
+          restore-keys: |
+            ${{ runner.os }}-${{ matrix.php-versions }}-composer-
+
+      - name: Setup PHP ${{ matrix.php-versions }}
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-versions }}
+          tools: composer
+
+      - name: "🎪 PhpStan"
+        id: phpstan
+        run: composer phpstan
+
+      - name: "📝 Code style"
+        id: phpcs
+        if: success() || steps.phpstan.outcome == 'failure'
+        run: composer phpcs
+
+      - name: "🧹Rector"
+        id: rector
+        if: success() || steps.phpstan.outcome == 'failure' || steps.phpcs.outcome == 'failure'
+        run: composer rector
