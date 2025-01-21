@@ -16,7 +16,7 @@ class Browserless extends AbstractPDF
     private ?int $rotate = NULL;
     private ?int $timeout = NULL;
 
-    public function __construct(HttpClient\HttpClientInterface $client, string $apiKey = NULL)
+    public function __construct(HttpClient\HttpClientInterface $client, ?string $apiKey = NULL)
     {
         $this->client = $client;
         if ($apiKey !== NULL) {
@@ -30,7 +30,7 @@ class Browserless extends AbstractPDF
      * @param int $rotation The number of degrees to rotate the document by
      * @return self
      */
-    public function setRotation(int $rotation = NULL): self
+    public function setRotation(?int $rotation = NULL): self
     {
         $this->rotate = $rotation;
         return $this;
@@ -67,7 +67,7 @@ class Browserless extends AbstractPDF
      * @param int $milliseconds
      * @return self
      */
-    public function setTimeout(int $milliseconds = NULL): self
+    public function setTimeout(?int $milliseconds = NULL): self
     {
         $this->timeout = $milliseconds;
         return $this;
