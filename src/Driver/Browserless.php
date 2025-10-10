@@ -12,7 +12,6 @@ class Browserless extends AbstractPDF
     protected string $apiUrl = 'https://chrome.browserless.io';
     private string $pdfEndpoint = '/pdf';
     private HttpClient\HttpClientInterface $client;
-    private bool $safeMode = FALSE;
     private ?int $rotate = NULL;
     private ?int $timeout = NULL;
 
@@ -49,19 +48,6 @@ class Browserless extends AbstractPDF
     }
 
     /**
-     * Sets whether or not to ask Browserless to attempt to render the document in safe mode
-     *
-     * @link https://docs.browserless.io/docs/pdf.html#safemode
-     * @param bool $safeMode
-     * @return self
-     */
-    public function setSafeMode(bool $safeMode): self
-    {
-        $this->safeMode = $safeMode;
-        return $this;
-    }
-
-    /**
      * Sets the maximum time the PDF renderer should be prepared to spend rendering
      *
      * @param int $milliseconds
@@ -91,16 +77,6 @@ class Browserless extends AbstractPDF
     public function getApiKey(): ?string
     {
         return $this->apiKey;
-    }
-
-    /**
-     * Whether the document will be rendered in safe mode or not
-     *
-     * @return bool
-     */
-    public function getSafeMode(): bool
-    {
-        return $this->safeMode;
     }
 
     /**
@@ -168,7 +144,6 @@ class Browserless extends AbstractPDF
 
         $options = [
             'options' => $pdfOptions,
-            'safeMode' => $this->getSafeMode(),
         ];
 
         $goto = [];
